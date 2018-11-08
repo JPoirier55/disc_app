@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <style>
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+</style>
+</head>
+<body>
+
+<label for="lat">Lat:</label>
+<input id="lat" type="number" name="quantity">
+<label for="long">Long:</label>
+<input id="long" type="number" name="quantity">
+
+<button onclick="getLocFromLatLong()">Fetch</button>
+
+<div>
+    <table>
+        {% for course in data %}
+            <tr>
+                <td>
+                    <div>
+                        <p>NAME: {{ course.name }}</p>
+                        <p>CITY: {{ course.city }}</p>
+                        <p>DISTANCE: {{ course.distance }}</p>
+                        <p>STARS: {{ course.stars }}/5</p>
+                        <a href="{{ course.link }}">Course Link</a>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<script>
+    var x = document.getElementById("demo");
+    var y = document.getElementById("demo2");
+
+    function getLocFromLatLong() {
+        lat = document.getElementById("lat").value;
+        long = document.getElementById("long").value;
+        window.location = "/loc?lat=" + lat + "&long=" + long;
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <style>
+        /* Set the size of the div element that contains the map */
+        #map {
+            height: 400px; /* The height is 400 pixels */
+            width: 100%; /* The width is the width of the web page */
+        }
+    </style>
+</head>
+<body>
+<div id="map"></div>
+<p>Click the button to get your coordinates.</p>
+
+<button onclick="getLocation()">Try It</button>
+
+<p id="demo"></p>
+
+<label for="lat">Lat:</label>
+<input id="lat" type="number" name="quantity">
+<label for="long">Long:</label>
+<input id="long" type="number" name="quantity">
+
+<button onclick="getLocFromLatLong()">Fetch</button>
+
+<p id="demo2"></p>
+
+
+<script>
+    var x = document.getElementById("demo");
+    var y = document.getElementById("demo2");
+
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition);
+        } else {
+            x.innerHTML = "Geolocation is not supported by this browser.";
+        }
+    }
+
+    function showPosition(position) {
+        x.innerHTML = "Latitude: " + position.coords.latitude +
+            "<br>Longitude: " + position.coords.longitude;
+    }
+
+    function getLocFromLatLong() {
+        lat = document.getElementById("lat").value;
+        long = document.getElementById("long").value;
+        $.post("/api/geo_to_city",
+            {
+                lat: lat,
+                long: long
+            },
+            function (data, status) {
+                y.innerHTML = data;
+                var obj = JSON.parse(data);
+                add_comps = obj['results'][0]['address_components'];
+                jQuery.each(add_comps, function(i, val){
+                    if(val['types'][0] == 'postal_code'){
+                        console.log(i, val);
+                        postal_code = val['short_name'];
+                    }
+                });
+                newMap(parseFloat(lat), parseFloat(long));
+            });
+    }
+</script>
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAuZbeei_JtF-5mHhcSw6uZ9L0__8hcqgk&callback=initMap">
+</script>
+
+{% csrf_token %}
+<script type="text/javascript">
+    // using jQuery
+    var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+</script>
+<script>
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
