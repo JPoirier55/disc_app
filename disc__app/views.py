@@ -15,7 +15,7 @@ def location(request):
     print(request)
     # zipcode = request.POST['zip']
     postal_code = '00000'
-    url3 = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + lat +"," + long +"&key=AIzaSyAuZbeei_JtF-5mHhcSw6uZ9L0__8hcqgk"
+    url3 = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + lat +"," + long +"&key="
     r = requests.get(url3)
     json_obj = json.loads(r.text)
     resp_obj = []
